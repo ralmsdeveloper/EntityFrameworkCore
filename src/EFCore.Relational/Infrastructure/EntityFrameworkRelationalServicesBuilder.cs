@@ -67,6 +67,7 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
                 { typeof(IMigrationsSqlGenerator), new ServiceCharacteristics(ServiceLifetime.Singleton) },
                 { typeof(IRelationalTypeMapper), new ServiceCharacteristics(ServiceLifetime.Singleton) },
                 { typeof(IRelationalValueBufferFactoryFactory), new ServiceCharacteristics(ServiceLifetime.Singleton) },
+                { typeof(IDataReaderMethodProvider), new ServiceCharacteristics(ServiceLifetime.Singleton) },
                 { typeof(IMaterializerFactory), new ServiceCharacteristics(ServiceLifetime.Singleton) },
                 { typeof(IShaperCommandContextFactory), new ServiceCharacteristics(ServiceLifetime.Singleton) },
                 { typeof(IConditionalRemovingExpressionVisitorFactory), new ServiceCharacteristics(ServiceLifetime.Singleton) },
@@ -143,6 +144,7 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
             TryAdd<IExecutionStrategyFactory, RelationalExecutionStrategyFactory>();
             TryAdd<ITypeMapper>(p => p.GetService<IRelationalTypeMapper>());
             TryAdd<IRelationalValueBufferFactoryFactory, TypedRelationalValueBufferFactoryFactory>();
+            TryAdd<IDataReaderMethodProvider, DefaultDataReaderMethodProvider>();
             TryAdd<IDatabaseCreator>(p => p.GetService<IRelationalDatabaseCreator>());
             TryAdd<IDbContextTransactionManager>(p => p.GetService<IRelationalConnection>());
             TryAdd<IMaterializerFactory, MaterializerFactory>();
@@ -181,6 +183,7 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
                 .AddDependencySingleton<RelationalValueBufferFactoryDependencies>()
                 .AddDependencySingleton<RelationalProjectionExpressionVisitorDependencies>()
                 .AddDependencySingleton<RelationalTransactionFactoryDependencies>()
+                .AddDependencySingleton<DataReaderMethodProviderDependencies>()
                 .AddDependencyScoped<RelationalConventionSetBuilderDependencies>()
                 .AddDependencyScoped<CommandBatchPreparerDependencies>()
                 .AddDependencyScoped<RelationalDatabaseCreatorDependencies>()

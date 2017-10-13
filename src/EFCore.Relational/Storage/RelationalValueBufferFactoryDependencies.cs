@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Data.Common;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Utilities;
@@ -38,12 +39,16 @@ namespace Microsoft.EntityFrameworkCore.Storage
         ///     </para>
         /// </summary>
         /// <param name="typeMapper"> The type mapper. </param>
+        /// <param name="dataReaderMethodProvider"> The service used to determine methods to call on the <see cref="DbDataReader"/>. </param>
         public RelationalValueBufferFactoryDependencies(
-            [NotNull] IRelationalTypeMapper typeMapper)
+            [NotNull] IRelationalTypeMapper typeMapper,
+            [NotNull] IDataReaderMethodProvider dataReaderMethodProvider)
         {
             Check.NotNull(typeMapper, nameof(typeMapper));
+            Check.NotNull(dataReaderMethodProvider, nameof(dataReaderMethodProvider));
 
             TypeMapper = typeMapper;
+            DataReaderMethodProvider = dataReaderMethodProvider;
         }
 
         /// <summary>
@@ -52,11 +57,24 @@ namespace Microsoft.EntityFrameworkCore.Storage
         public IRelationalTypeMapper TypeMapper { get; }
 
         /// <summary>
+        ///     Gets the service used to determine methods to call on the <see cref="DbDataReader"/>.
+        /// </summary>
+        public IDataReaderMethodProvider DataReaderMethodProvider { get; }
+
+        /// <summary>
         ///     Clones this dependency parameter object with one service replaced.
         /// </summary>
         /// <param name="typeMapper"> A replacement for the current dependency of this type. </param>
         /// <returns> A new parameter object with the given service replaced. </returns>
         public RelationalValueBufferFactoryDependencies With([NotNull] IRelationalTypeMapper typeMapper)
-            => new RelationalValueBufferFactoryDependencies(typeMapper);
+            => new RelationalValueBufferFactoryDependencies(typeMapper, DataReaderMethodProvider);
+
+        /// <summary>
+        ///     Clones this dependency parameter object with one service replaced.
+        /// </summary>
+        /// <param name="dataReaderMethodProvider"> A replacement for the current dependency of this type. </param>
+        /// <returns> A new parameter object with the given service replaced. </returns>
+        public RelationalValueBufferFactoryDependencies With([NotNull] IDataReaderMethodProvider dataReaderMethodProvider)
+            => new RelationalValueBufferFactoryDependencies(TypeMapper, dataReaderMethodProvider);
     }
 }

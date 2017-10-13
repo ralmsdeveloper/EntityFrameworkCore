@@ -34,7 +34,9 @@ namespace Microsoft.EntityFrameworkCore.Update
                         typeMapper)),
                 new UntypedRelationalValueBufferFactoryFactory(
                     new RelationalValueBufferFactoryDependencies(
-                        typeMapper)),
+                        typeMapper,
+                        new DefaultDataReaderMethodProvider(
+                            new DataReaderMethodProviderDependencies()))),
                 optionsBuilder.Options);
 
             var batch = factory.Create();
@@ -65,7 +67,9 @@ namespace Microsoft.EntityFrameworkCore.Update
                         typeMapper)),
                 new UntypedRelationalValueBufferFactoryFactory(
                     new RelationalValueBufferFactoryDependencies(
-                        typeMapper)),
+                        typeMapper,
+                        new DefaultDataReaderMethodProvider(
+                            new DataReaderMethodProviderDependencies()))),
                 optionsBuilder.Options);
 
             var batch = factory.Create();

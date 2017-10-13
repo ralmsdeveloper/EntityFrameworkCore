@@ -88,6 +88,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .TryAdd<ICompositeMethodCallTranslator, OracleCompositeMethodCallTranslator>()
                 .TryAdd<IQuerySqlGeneratorFactory, OracleQuerySqlGeneratorFactory>()
                 .TryAdd<IRelationalCommandBuilderFactory, OracleRelationalCommandBuilderFactory>()
+                .TryAdd<IDataReaderMethodProvider, OracleDataReaderMethodProvider>()
                 .TryAddProviderSpecificServices(
                     b => b
                         .TryAddSingleton<IOracleValueGeneratorCache, OracleValueGeneratorCache>()

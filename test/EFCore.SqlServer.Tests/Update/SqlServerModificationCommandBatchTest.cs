@@ -31,7 +31,9 @@ namespace Microsoft.EntityFrameworkCore.Update
                         typeMapper)),
                 new UntypedRelationalValueBufferFactoryFactory(
                     new RelationalValueBufferFactoryDependencies(
-                        typeMapper)),
+                        typeMapper,
+                        new DefaultDataReaderMethodProvider(
+                            new DataReaderMethodProviderDependencies()))),
                 1);
 
             Assert.True(

@@ -548,7 +548,9 @@ namespace Microsoft.EntityFrameworkCore.Update
                     new TypedRelationalValueBufferFactoryFactory(
                         new RelationalValueBufferFactoryDependencies(
                             new FakeRelationalTypeMapper(
-                                new RelationalTypeMapperDependencies()))))
+                                new RelationalTypeMapperDependencies()),
+                            new DefaultDataReaderMethodProvider(
+                                new DataReaderMethodProviderDependencies()))))
             {
                 ShouldAddCommand = true;
                 ShouldValidateSql = true;
