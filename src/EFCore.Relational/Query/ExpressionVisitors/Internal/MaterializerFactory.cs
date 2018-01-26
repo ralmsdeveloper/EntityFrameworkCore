@@ -59,10 +59,18 @@ namespace Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal
                 = Expression.Parameter(typeof(MaterializationContext), "materializationContext");
 
             var concreteEntityTypes = entityType.GetConcreteTypesInHierarchy().ToList();
+<<<<<<< HEAD
             var firstEntityType = concreteEntityTypes[0];
             var indexMap = new int[firstEntityType.PropertyCount()];
 
             foreach (var property in firstEntityType.GetProperties())
+=======
+            var rootEntityType = concreteEntityTypes[0];
+            var indexMap = new int[rootEntityType.PropertyCount()];
+            var contextParameter = Expression.Parameter(typeof(DbContext), "context");
+
+            foreach (var property in rootEntityType.GetProperties())
+>>>>>>> Document Db
             {
                 indexMap[property.GetIndex()] = projectionAdder(property, selectExpression);
             }
