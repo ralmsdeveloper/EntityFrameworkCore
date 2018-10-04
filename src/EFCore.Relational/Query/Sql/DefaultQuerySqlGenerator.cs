@@ -1344,7 +1344,37 @@ namespace Microsoft.EntityFrameworkCore.Query.Sql
                     _relationalCommandBuilder.Append(")");
 
                     break;
+                case ExpressionType.OrElse:
+                case ExpressionType.AndAlso:
+                    {
+                        if (binaryExpression.Left.RemoveConvert()  is BinaryExpression leftBinary
+                            && binaryExpression.Right.RemoveConvert() is BinaryExpression rightBinary
+                            && (leftBinary.NodeType == ExpressionType.LessThan || leftBinary.NodeType == ExpressionType.GreaterThanOrEqual)
+                            && (rightBinary.NodeType == ExpressionType.GreaterThan || rightBinary.NodeType == ExpressionType.LessThanOrEqual)
+                            && leftBinary.Left.Equals(rightBinary.Left))
+                        {
+                            Visit(leftBinary.Left);
 
+                            if(binaryExpression.NodeType == ExpressionType.OrElse)
+                            {
+                                _relationalCommandBuilder.Append(" NOT");
+                            }
+
+                            _relationalCommandBuilder.Append(" BETWEEN ");
+
+                            Visit(leftBinary.Right);
+
+                            _relationalCommandBuilder.Append(" AND ");
+
+                            Visit(rightBinary.Right);
+
+                            return binaryExpression;
+                        }
+                        else
+                        {
+                            goto default;
+                        }
+                    }
                 default:
                     var needParens = binaryExpression.Left.RemoveConvert() is BinaryExpression leftBinaryExpression
                                      && leftBinaryExpression.NodeType != ExpressionType.Coalesce;

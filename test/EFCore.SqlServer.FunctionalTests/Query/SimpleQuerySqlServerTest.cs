@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 using Microsoft.EntityFrameworkCore.TestUtilities;
+using Microsoft.EntityFrameworkCore.TestUtilities.Xunit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -4723,6 +4724,52 @@ WHERE ([c].[CustomerID] LIKE N'A' + N'%' AND (LEFT([c].[CustomerID], LEN(N'A')) 
     ORDER BY [o0].[OrderID]
 ))");
         }
+
+        [ConditionalTheory]
+        [MemberData(nameof(IsAsyncData))]
+        public virtual async Task Select_where_between_cast(bool isAsync)
+        {
+            using (var ctx = CreateContext())
+            {
+                await ctx.Employees.Where(p => p.EmployeeID >= 2 && p.EmployeeID <= 10).ToListAsync();
+            }
+
+            AssertSql(
+                @"SELECT [p].[EmployeeID], [p].[City], [p].[Country], [p].[FirstName], [p].[ReportsTo], [p].[Title]
+FROM [Employees] AS [p]
+WHERE [p].[EmployeeID] BETWEEN CAST(2 AS bigint) AND CAST(10 AS bigint)");
+        }
+
+        [ConditionalTheory]
+        [MemberData(nameof(IsAsyncData))]
+        public virtual async Task Select_where_between(bool isAsync)
+        {
+            using (var ctx = CreateContext())
+            {
+                await ctx.Orders.Where(p => p.OrderID >= 2 && p.OrderID <= 10).ToListAsync();
+            }
+
+            AssertSql(
+                @"SELECT [p].[OrderID], [p].[CustomerID], [p].[EmployeeID], [p].[OrderDate]
+FROM [Orders] AS [p]
+WHERE [p].[OrderID] BETWEEN 2 AND 10");
+        }
+
+        [ConditionalTheory]
+        [MemberData(nameof(IsAsyncData))]
+        public virtual async Task Select_where_not_between(bool isAsync)
+        {
+            using (var ctx = CreateContext())
+            {
+                await ctx.Orders.Where(p => !(p.OrderID >= 2 && p.OrderID <= 10)).ToListAsync();
+            }
+
+            AssertSql(
+                @"SELECT [p].[OrderID], [p].[CustomerID], [p].[EmployeeID], [p].[OrderDate]
+FROM [Orders] AS [p]
+WHERE [p].[OrderID] NOT BETWEEN 2 AND 10");
+        }
+
 
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
